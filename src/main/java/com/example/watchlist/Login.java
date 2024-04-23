@@ -20,6 +20,7 @@ public class Login extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(Register.class.getResource("LoginPage.fxml"));
         Parent root = fxmlLoader.load();
 
+
         Scene scene = new Scene(root, 600, 400);
 
         stage.setTitle("Login");

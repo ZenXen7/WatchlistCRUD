@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class RegisterController {
@@ -34,6 +35,7 @@ public class RegisterController {
         skipToLogin.setOnAction(this::skip);
     }
 
+
     @FXML
     private void register() {
         String username = inputUser.getText();
@@ -42,25 +44,42 @@ public class RegisterController {
         if (username.isEmpty() || password.isEmpty()) {
             wrongLogin.setText("Details cannot be empty");
         } else {
-            try (Connection c = Register.getConnection();
-                 PreparedStatement statement = c.prepareStatement(
-                         "INSERT INTO tbluseraccount(username, password) VALUES (?,?)"
-                 )) {
-                statement.setString(1, username);
-                statement.setString(2, password);
-                int rows = statement.executeUpdate();
-                System.out.println("Rows inserted: " + rows);
-                System.out.println("Data Inserted Successfully");
-                wrongLogin.setText("Account Created");
+            try (Connection c = Register.getConnection()) {
 
-                inputUser.clear();
-                inputPass.clear();
+                try (PreparedStatement checkStatement = c.prepareStatement(
+                        "SELECT COUNT(*) FROM tbluseraccount WHERE username = ?")) {
+                    checkStatement.setString(1, username);
+                    try (ResultSet resultSet = checkStatement.executeQuery()) {
+                        resultSet.next();
+                        int count = resultSet.getInt(1);
+                        if (count > 0) {
+                            wrongLogin.setText("Username already exists");
+                            return;
+                        }
+                    }
+                }
 
+
+                try (PreparedStatement statement = c.prepareStatement(
+                        "INSERT INTO tbluseraccount(username, password) VALUES (?,?)"
+                )) {
+                    statement.setString(1, username);
+                    statement.setString(2, password);
+                    int rows = statement.executeUpdate();
+                    System.out.println("Rows inserted: " + rows);
+                    System.out.println("Data Inserted Successfully");
+                    wrongLogin.setText("Account Created");
+
+                    inputUser.clear();
+                    inputPass.clear();
+
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
     }
+
 
 
     @FXML
