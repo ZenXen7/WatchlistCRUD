@@ -54,7 +54,7 @@
                   <Font name="Source Sans Pro Light" size="13.0" />
                </font>
             </Button>
-            <Label fx:id="wrongLogin" layoutX="106.0" layoutY="155.0" prefHeight="17.0" prefWidth="209.0" textFill="WHITE" />
+            <Label fx:id="wrongLogin" layoutX="141.0" layoutY="155.0" prefHeight="17.0" prefWidth="137.0" textFill="WHITE" />
             <Hyperlink fx:id="skipToLogin" layoutX="119.0" layoutY="347.0" onAction="#skip" text="Already have an account?" />
          </children>
       </AnchorPane>

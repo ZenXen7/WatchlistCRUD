@@ -40,7 +40,7 @@ public class RegisterController {
         String password = inputPass.getText();
 
         if (username.isEmpty() || password.isEmpty()) {
-            wrongLogin.setText("Username or Password cannot be empty");
+            wrongLogin.setText("Details cannot be empty");
         } else {
             try (Connection c = Register.getConnection();
                  PreparedStatement statement = c.prepareStatement(
