@@ -33,18 +33,25 @@ public class RegisterController {
     private Hyperlink skipToLogin;
 
     private void initialize() {
+        btnRegister.setOnAction(this::register);
         skipToLogin.setOnAction(this::skip);
     }
 
 
     @FXML
-    private void register() {
+    private void register(ActionEvent event) {
         String username = inputUser.getText();
         String password = inputPass.getText();
 
         if (username.isEmpty() || password.isEmpty()) {
             wrongLogin.setText("Details cannot be empty");
-        } else {
+        }
+        else if(username.length() < 6 ){
+            wrongLogin.setText("Username too short");
+        }
+        else if(password.length() < 6){
+            wrongLogin.setText("Password too short");
+        }else {
             try (Connection c = Register.getConnection()) {
 
                 try (PreparedStatement checkStatement = c.prepareStatement(

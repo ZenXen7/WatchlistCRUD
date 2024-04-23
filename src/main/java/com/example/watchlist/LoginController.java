@@ -36,6 +36,7 @@ public class LoginController {
 
 
     private void initialize() {
+        btnLogin.setOnAction(this::login);
         backToRegister.setOnAction(this::backRegister);
     }
 
@@ -46,6 +47,7 @@ public class LoginController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("RegisterPage.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
+            stage.getIcons().add(new Image(Login.class.getResourceAsStream("/logo.png")));
             stage.setScene(new Scene(root));
             stage.setTitle("Register");
             stage.show();
@@ -56,8 +58,7 @@ public class LoginController {
         }
     }
     @FXML
-    private void login() {
-        btnLogin.setOnAction((ActionEvent event) -> {
+    private void login(ActionEvent event) {
             String username = loginUserInput.getText();
             String password = loginPassInput.getText();
             boolean authenticated = authenticate(username, password);
@@ -87,9 +88,9 @@ public class LoginController {
             else {
                 noAccount.setText("Wrong username or password");
             }
-        });
+        }
 
-    }
+
 
     private boolean authenticate(String username, String password) {
         try (Connection c = Register.getConnection();
