@@ -137,7 +137,7 @@ public class WatchlistController {
         }
         try (Connection c = Register.getConnection();
              PreparedStatement statement = c.prepareStatement("SELECT movie_title, genre FROM tblwatchlist WHERE id = ?")) {
-            statement.setInt(1, userId); // Use the user's ID
+            statement.setInt(1, userId);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 String movieTitle = resultSet.getString("movie_title");

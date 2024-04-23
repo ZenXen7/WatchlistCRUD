@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -22,6 +23,8 @@ public class Register extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Register.class.getResource("RegisterPage.fxml"));
         Parent root = fxmlLoader.load();
+
+        stage.getIcons().add(new Image(Register.class.getResourceAsStream("/logo.png")));
 
         Scene scene = new Scene(root, 600, 400);
 

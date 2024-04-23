@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ public class Login extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(Register.class.getResource("LoginPage.fxml"));
         Parent root = fxmlLoader.load();
 
-
+        stage.getIcons().add(new Image(Login.class.getResourceAsStream("/logo.png")));
         Scene scene = new Scene(root, 600, 400);
 
         stage.setTitle("Login");
