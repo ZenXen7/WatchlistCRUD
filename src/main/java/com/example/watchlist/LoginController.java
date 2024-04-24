@@ -34,12 +34,35 @@ public class LoginController {
     @FXML
     private Hyperlink backToRegister;
 
+    @FXML
+    private Hyperlink resetPassword;
 
+    @FXML
     private void initialize() {
         btnLogin.setOnAction(this::login);
         backToRegister.setOnAction(this::backRegister);
+        resetPassword.setOnAction(this::setResetPassword);
     }
 
+    @FXML
+    private void setResetPassword(ActionEvent event){
+
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ResetPassword.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.getIcons().add(new Image(Login.class.getResourceAsStream("/logo.png")));
+            stage.setScene(new Scene(root));
+            stage.setTitle("Reset Password");
+            stage.show();
+
+            ((Stage) resetPassword.getScene().getWindow()).close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
     @FXML
     private void backRegister(ActionEvent event) {
 
