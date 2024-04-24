@@ -10,6 +10,8 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -45,48 +47,58 @@ public class RegisterController {
 
         if (username.isEmpty() || password.isEmpty()) {
             wrongLogin.setText("Details cannot be empty");
-        }
-        else if(username.length() < 6 ){
+        } else if (username.length() < 6) {
             wrongLogin.setText("Username too short");
-        }
-        else if(password.length() < 6){
+        } else if (password.length() < 6) {
             wrongLogin.setText("Password too short");
-        }else {
-            try (Connection c = Register.getConnection()) {
-
-                try (PreparedStatement checkStatement = c.prepareStatement(
-                        "SELECT COUNT(*) FROM tbluseraccount WHERE username = ?")) {
-                    checkStatement.setString(1, username);
-                    try (ResultSet resultSet = checkStatement.executeQuery()) {
-                        resultSet.next();
-                        int count = resultSet.getInt(1);
-                        if (count > 0) {
-                            wrongLogin.setText("Username already exists");
-                            return;
-                        }
-                    }
-                }
-
-
-                try (PreparedStatement statement = c.prepareStatement(
-                        "INSERT INTO tbluseraccount(username, password) VALUES (?,?)"
-                )) {
-                    statement.setString(1, username);
-                    statement.setString(2, password);
-                    int rows = statement.executeUpdate();
-                    System.out.println("Rows inserted: " + rows);
-                    System.out.println("Data Inserted Successfully");
+        } else {
+            String hashedPassword = PasswordUtils.hashPassword(password);
+            if (hashedPassword != null) {
+                boolean registered = registerUser(username, hashedPassword);
+                if (registered) {
                     wrongLogin.setText("Account Created");
-
                     inputUser.clear();
                     inputPass.clear();
-
+                } else {
+                    wrongLogin.setText("Failed to register. Please try again.");
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } else {
+                wrongLogin.setText("Failed to hash password.");
             }
         }
     }
+
+    private boolean registerUser(String username, String hashedPassword) {
+        try (Connection c = Register.getConnection()) {
+            try (PreparedStatement checkStatement = c.prepareStatement(
+                    "SELECT COUNT(*) FROM tbluseraccount WHERE username = ?")) {
+                checkStatement.setString(1, username);
+                try (ResultSet resultSet = checkStatement.executeQuery()) {
+                    resultSet.next();
+                    int count = resultSet.getInt(1);
+                    if (count > 0) {
+                        wrongLogin.setText("Username already exists");
+                        return false;
+                    }
+                }
+            }
+
+            try (PreparedStatement statement = c.prepareStatement(
+                    "INSERT INTO tbluseraccount(username, password) VALUES (?,?)"
+            )) {
+                statement.setString(1, username);
+                statement.setString(2, hashedPassword);
+                int rows = statement.executeUpdate();
+                System.out.println("Rows inserted: " + rows);
+                System.out.println("Data Inserted Successfully");
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
 
 

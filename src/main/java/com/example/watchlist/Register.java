@@ -52,7 +52,7 @@ public class Register extends Application {
                     "FOREIGN KEY (id) REFERENCES tbluseraccount(id)" +
                     ")";
             statement.executeUpdate(createWatchlistTableSQL);
-            System.out.println("Table created successfully");
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -64,7 +64,7 @@ public class Register extends Application {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             c = DriverManager.getConnection(URL, USER, PASS);
-            System.out.println("Connection Successful");
+
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }

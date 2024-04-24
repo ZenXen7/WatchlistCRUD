@@ -104,7 +104,6 @@ public class LoginController {
                 catch (IOException e){
                     e.printStackTrace();
                 }
-                System.out.println("Login successful");
             } else if(loginPassInput.getText().isEmpty() || loginPassInput.getText().isEmpty()){
                 noAccount.setText("Details Empty");
             }
@@ -117,18 +116,22 @@ public class LoginController {
 
     private boolean authenticate(String username, String password) {
         try (Connection c = Register.getConnection();
-             PreparedStatement statement = c.prepareStatement("SELECT * FROM tbluseraccount WHERE username = ? AND password = ?")) {
+             PreparedStatement statement = c.prepareStatement("SELECT * FROM tbluseraccount WHERE username = ?")) {
             statement.setString(1, username);
-            statement.setString(2, password);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                userId = resultSet.getInt("id");
-                return true;
+                String storedHashedPassword = resultSet.getString("password");
+                String hashedPassword = PasswordUtils.hashPassword(password);
+                if (hashedPassword != null && hashedPassword.equals(storedHashedPassword)) {
+                    userId = resultSet.getInt("id");
+                    return true;
+                }
             }
-            return resultSet.next();
+            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
+
 }
