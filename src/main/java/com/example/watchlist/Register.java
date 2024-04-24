@@ -48,6 +48,7 @@ public class Register extends Application {
                     "id INT," +
                     "movie_title VARCHAR(100)," +
                     "genre VARCHAR(100)," +
+                    "dateAdded DATETIME DEFAULT CURRENT_TIMESTAMP," +
                     "FOREIGN KEY (id) REFERENCES tbluseraccount(id)" +
                     ")";
             statement.executeUpdate(createWatchlistTableSQL);
