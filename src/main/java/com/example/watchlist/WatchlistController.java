@@ -15,11 +15,14 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import javafx.collections.transformation.FilteredList;
 
 import java.io.IOException;
 import java.sql.*;
 
 public class WatchlistController {
+    @FXML
+    private ComboBox<Genre> genreFilterComboBox;
 
     private int userId;
     private String username;
@@ -51,14 +54,14 @@ public class WatchlistController {
 
 
     public enum Genre {
-        ACTION,
-        COMEDY,
-        DRAMA,
-        HORROR,
-        ROMANCE,
-        SCIENCE_FICTION,
-        THRILLER,
-        OTHER
+        Action,
+        Comedy,
+        Drama,
+        Horror,
+        Romance,
+        Science_Fiction,
+        Thriller,
+        Other
     }
     @FXML
     private void initialize() {
@@ -66,13 +69,34 @@ public class WatchlistController {
         genreComboBox.getItems().addAll(Genre.values());
         genreComboBox.setItems(FXCollections.observableArrayList(Genre.values()));
         connection = Register.getConnection();
+
+        genreFilterComboBox.getItems().addAll(Genre.values());
+        genreFilterComboBox.getItems().add(null);
+        genreFilterComboBox.setPromptText("All");
+
+        connection = Register.getConnection();
+
+        genreFilterComboBox.setOnAction(event -> {
+            filterByGenre(genreFilterComboBox.getValue());
+        });
     }
+
 
     public void setUsername(String username) {
         this.username = username;
         nameOfUser.setText(username + "'s Watchlist");
         this.userId = getUserId(username);
         fetchMovies();
+    }
+    private void filterByGenre(Genre genre) {
+        FilteredList<Movie> filteredData = new FilteredList<>(movieData, movie -> true);
+        if (genre != null) {
+            filteredData.setPredicate(movie -> movie.getGenre().equals(genre.toString()));
+        } else {
+
+            filteredData.setPredicate(movie -> true);
+        }
+        movieTable.setItems(filteredData);
     }
 
     @FXML
