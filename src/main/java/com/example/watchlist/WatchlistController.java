@@ -43,7 +43,30 @@ public class WatchlistController {
 
     @FXML
     private Hyperlink logout;
+    @FXML
+    private ComboBox<Genre> genreComboBox;
 
+
+
+
+
+    public enum Genre {
+        ACTION,
+        COMEDY,
+        DRAMA,
+        HORROR,
+        ROMANCE,
+        SCIENCE_FICTION,
+        THRILLER,
+        OTHER
+    }
+    @FXML
+    private void initialize() {
+        genreComboBox = new ComboBox<>();
+        genreComboBox.getItems().addAll(Genre.values());
+        genreComboBox.setItems(FXCollections.observableArrayList(Genre.values()));
+        connection = Register.getConnection();
+    }
 
     public void setUsername(String username) {
         this.username = username;
@@ -69,21 +92,17 @@ public class WatchlistController {
 
         TextField movieTitle = new TextField();
         movieTitle.setPromptText("Movie Title");
-        TextField genre = new TextField();
-        genre.setPromptText("Genre");
-
 
         grid.add(new Label("Movie Title:"), 0, 0);
         grid.add(movieTitle, 1, 0);
         grid.add(new Label("Genre:"), 0, 1);
-        grid.add(genre, 1, 1);
-
+        grid.add(genreComboBox, 1, 1);
 
         dialog.getDialogPane().setContent(grid);
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == addButtonType) {
-                return movieTitle.getText() + "," + genre.getText() + "," + currentDate;
+                return movieTitle.getText() + "," + genreComboBox.getValue() + "," + currentDate;
             }
             return null;
         });
@@ -107,16 +126,12 @@ public class WatchlistController {
                 }
             } else {
 
-
             }
         });
     }
 
 
-    @FXML
-    private void initialize() {
-        connection = Register.getConnection();
-    }
+
 
 
 
@@ -169,6 +184,72 @@ public class WatchlistController {
             alert.showAndWait();
         }
     }
+
+    @FXML
+    private void updateList(ActionEvent event) {
+        Movie selectedMovie = movieTable.getSelectionModel().getSelectedItem();
+        if (selectedMovie != null) {
+            Dialog<String> dialog = new Dialog<>();
+            dialog.setTitle("Update Movie Details");
+
+            ButtonType updateButtonType = new ButtonType("Update", ButtonBar.ButtonData.OK_DONE);
+            dialog.getDialogPane().getButtonTypes().addAll(updateButtonType, ButtonType.CANCEL);
+
+            GridPane grid = new GridPane();
+            grid.setHgap(10);
+            grid.setVgap(10);
+            grid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
+
+            TextField movieTitle = new TextField(selectedMovie.getMovieTitle());
+            movieTitle.setPromptText("Movie Title");
+
+            ComboBox<Genre> genreComboBox = new ComboBox<>();
+            genreComboBox.getItems().addAll(Genre.values());
+            genreComboBox.setValue(Genre.valueOf(selectedMovie.getGenre()));
+            grid.add(new Label("Movie Title:"), 0, 0);
+            grid.add(movieTitle, 1, 0);
+            grid.add(new Label("Genre:"), 0, 1);
+            grid.add(genreComboBox, 1, 1);
+
+            dialog.getDialogPane().setContent(grid);
+
+            dialog.setResultConverter(dialogButton -> {
+                if (dialogButton == updateButtonType) {
+                    return movieTitle.getText() + "," + genreComboBox.getValue();
+                }
+                return null;
+            });
+
+            dialog.showAndWait().ifPresent(result -> {
+                String[] movieDetails = result.split(",");
+                if (movieDetails.length >= 2) {
+                    String movieTitleText = movieDetails[0];
+                    Genre genre = genreComboBox.getValue();
+                    String genreText = genre.toString();
+                    try {
+                        PreparedStatement statement = connection.prepareStatement("UPDATE tblwatchlist SET movie_title = ?, genre = ? WHERE movie_id = ?");
+                        statement.setString(1, movieTitleText);
+                        statement.setString(2, genreText);
+                        statement.setInt(3, selectedMovie.getId());
+                        statement.executeUpdate();
+                        fetchMovies();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+
+                }
+            });
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("No Movie Selected");
+            alert.setHeaderText(null);
+            alert.setContentText("Please select a movie to update.");
+            alert.showAndWait();
+        }
+    }
+
+
 
 
     @FXML
