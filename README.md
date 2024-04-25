@@ -17,8 +17,7 @@
 
 ### Read
 <div align="center">
-  <img src="![login](https://github.com/ZenXen7/WatchlistCRUD/assets/119471599/67782996-13b3-493a-8620-fdb302f9f74e)
-" alt="login" width="400"/>
+  <img src="https://github.com/ZenXen7/WatchlistCRUD/assets/119471599/0d5c2fa0-a626-4f68-b185-1cf5287acf81)" alt="login" width="400"/>
 </div>
 
 - Authenticate login.
