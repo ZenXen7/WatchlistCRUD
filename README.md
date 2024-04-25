@@ -10,16 +10,19 @@
 # Create
 -Register an account.
 ![register](https://github.com/ZenXen7/WatchlistCRUD/assets/119471599/c19af663-7db5-46b6-bf00-7f317a7d47f2)
+
 -Add movies into a list.
 # Read
 -Authenticate login.
 ![Uploading login.png…]()
+
 -Put movies inserted into a tableview with date added and specified genre
 -Authenticate users when logging in.
 -Filter the movies by genres.
 # Update
 -Reset password if user has forgotten.
 ![reset](https://github.com/ZenXen7/WatchlistCRUD/assets/119471599/bfacfd20-444e-48f9-b1ce-9f74d5d406f4)
+
 -Update movie name and genre if mistakes are made (we all make mistakes). 
 # Delete
 -Delete movies in the watchlist.
